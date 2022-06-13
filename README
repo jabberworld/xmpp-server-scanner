@@ -1,3 +1,21 @@
+Update 2022:
+Cloned from https://github.com/Tallefer/xmpp-server-scanner
+pybot/include/xmpp removed - it's not worked (can't connect to jabber servers - at least) and you can install newest version of python-xmpp from repository. Tested with this setup:
+
+$ dpkg -l | grep python-xmpp
+ii  python-xmpp                       0.4.1-cvs20080505.4                   all          Python library for communication with XMPP (Jabber) servers
+$ apt-cache policy python-xmpp
+python-xmpp:
+  Installed: 0.4.1-cvs20080505.4
+  Candidate: 0.4.1-cvs20080505.4
+  Version table:
+ *** 0.4.1-cvs20080505.4 500
+        500 http://ftp.nl.debian.org/debian buster/main amd64 Packages
+        100 /var/lib/dpkg/status
+
+Alternatively, you can download this library and put it in pybot/include/xmpp.
+
+--------------------------------------------------------------------------------
 
 XMPP Server Scanner
 http://code.google.com/p/xmpp-server-scanner/

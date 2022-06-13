@@ -1,7 +1,3 @@
-
-
-
-
 CREATE TABLE pybot_servers (
 	jid VARCHAR(255) NOT NULL UNIQUE,
 	offline_since DATETIME DEFAULT NULL,

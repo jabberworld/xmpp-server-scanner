@@ -76,7 +76,7 @@ except ImportError:
 	CAN_UPDATE_DATABASE = False
 else:
 	CAN_UPDATE_DATABASE = True
-	
+
 from include import xmpp_discoverer
 from include.helpers import get_version
 from include import html_file_generator, xml_file_generator
@@ -137,7 +137,7 @@ SERVERS_URLS = set( (
 ) )
 
 for option in cfg.options("Server list"):
-	if option.upper().startswith("SERVERS_URL"): 
+	if option.upper().startswith("SERVERS_URL"):
 		SERVERS_URLS.add(cfg.get("Server list", option))
 
 
@@ -173,47 +173,48 @@ logging.info('Starting execution of XMPP Server Scanner %s' % get_version())
 
 if DO_DISCOVERY:
 	# Get server list
-	
+
 	try:
 		if USE_FILE:
+			server_data = dict()
 			f = open(SERVERS_FILE, 'r')
 			tree = ET.parse(f)
 			file_servers = [item.get('jid') for item in tree.getroot().getchildren()]
 			f.close()
-		
+
 		if USE_URLS:
 			server_data = dict()
 			for url in SERVERS_URLS:
 				f = urllib.urlopen(url)
 				tree = ET.parse(f)
 				f.close()
-				
+
 				#tmp_url_servers = [item.get('jid') for item in tree.findall("/item")]
-				
+
 				tmp_server_data = dict((item.get('jid'), dict((element.tag, element.text) for element in item.getchildren() if element.text is not None)) for item in tree.findall("./item"))
-				
+
 				for jid in tmp_server_data.iterkeys():
 					if jid in server_data:
 						# This server was already on the list, combine the data
 						for item in tmp_server_data[jid].iterkeys():
 							assert tmp_server_data[jid][item] is not None
-							
+
 							if item in server_data[jid]:
 								# The field (homepage, description... is in both lists
-								
+
 								if len(server_data[jid][item]) < len(tmp_server_data[jid][item]):
 									server_data[jid][item] = tmp_server_data[jid][item]
 							else:
 								server_data[jid][item] = tmp_server_data[jid][item]
 					else:
 						server_data[jid] = tmp_server_data[jid] #dict((k, v) for k, v in tmp_server_data[jid].iteritems() if v is not None)
-				
+
 			url_servers = list(server_data.iterkeys())
-		
+
 	except IOError:
 		logging.critical('The server list can not be loaded', exc_info=sys.exc_info())
 		raise
-	
+
 	if USE_URLS and USE_FILE:
 		server_list = set(url_servers + file_servers)
 	elif USE_FILE:
@@ -223,13 +224,13 @@ if DO_DISCOVERY:
 	else:
 		logging.critical('You must configure the script to load the server list from the file, the url, or both')
 		raise Exception('You must configure the script to load the server list from the file, the url, or both')
-	
+
 	assert "description" not in server_list and "homepage" not in server_list
-	
+
 	#server_list=['jabberes.org', 'jab.undernet.cz', '12jabber.com', 'allchitchat.com', 'jabber.dk', 'amessage.be', 'jabber-hispano.org', 'example.net']
 	#server_list=['jabberes.org']
 	#server_list=['swissjabber.ch','default.co.yu','chrome.pl','codingteam.net','coruscant.info','core.segfault.pl','deshalbfrei.org','zweilicht.org','volgograd.ru','silper.cz','kingshomeworld.com','jabjab.de']
-	
+
 	if len(server_list) == 0:
 		logging.critical('The list of servers to check is empty')
 		raise Exception('The list of servers to check is empty')
@@ -238,29 +239,29 @@ if DO_DISCOVERY:
 	#servers = {k : {'jid': k, 'available': False, 'available_services': {}, 'unavailable_services': {}} for k in server_list}
 	#from pprint import pprint
 	#pprint(servers)
-	
+
 	# Add extra data to the servers dictionary
 	for server in servers:
 		if server in server_data:
 			servers[server]['about'] = server_data[server]
-			
+
 	if CHECK_IPv6:
 		for jid, server in servers.iteritems():
 			if server['available']:
 				server['ipv6_ready'] = is_ipv6_ready(jid)
-	
+
 	# Manage offline servers and stability information
-	
+
 	#offline = lambda server: len(server[u'info'][0]) == 0 and len(server[u'info'][1]) == 0
 	offline = lambda server: not server['available']
 	now = datetime.utcnow()
 	uptime_log_days = timedelta(UPTIME_LOG_DAYS)
-	
+
 	try:
 		f = open(SERVERS_DUMP_FILE, 'rb')
 		old_servers = pickle.load(f)
 		f.close()
-		
+
 	except IOError:
 		logging.warning( "Error loading servers data in file %s. Is the script executed for first time?" % SERVERS_DUMP_FILE,
 		                 exc_info=sys.exc_info() )
@@ -275,7 +276,7 @@ if DO_DISCOVERY:
 				server['uptime_data'] = {now: True}
 				server['times_queried_online'] = 1
 				server['times_queried'] = 1
-		
+
 	else:
 		for jid, server in servers.iteritems():
 			if offline(server):
@@ -298,20 +299,20 @@ if DO_DISCOVERY:
 				except KeyError: # It's a new server
 					logging.debug("Initializing stability data for %s", jid)
 					server['uptime_data'] = {now: True}
-			
+
 			# Delete old uptime information
-			
+
 			for log_date in sorted(server['uptime_data']):
 				if (now - log_date) > uptime_log_days:
 					del(server['uptime_data'][log_date])
 				else:
 					break
-			
+
 			#Recalculate times_queried_online and times_queried
-			
+
 			server['times_queried_online'] = server['uptime_data'].values().count(True)
 			server['times_queried'] = len(server['uptime_data'])
-		
+
 	finally:
 		try:
 			f = open(SERVERS_DUMP_FILE, 'wb')
@@ -350,14 +351,19 @@ elif UPDATE_DATABASE and CAN_UPDATE_DATABASE:
 # http://www.xmpp.org/registrar/disco-categories.html
 # Pure MUC components are marked as x-muc by the xmpp_discoverer
 show_types = [ ('conference','x-muc'), ('conference','irc'),
-               ('gateway', 'aim'), ('gateway', 'gadu-gadu'),
-               ('gateway', 'gtalk'), ('gateway', 'icq'), ('gateway', 'msn'),
-               ('gateway', 'qq'), ('gateway', 'sms'), ('gateway', 'smtp'),
-               ('gateway', 'tlen'), ('gateway', 'xmpp'), ('gateway', 'yahoo'),
+               ('gateway', 'gadu-gadu'),
+               ('gateway', 'gtalk'), ('gateway', 'icq'),
+               ('gateway', 'sms'), ('gateway', 'smtp'),
+               ('gateway', 'xmpp'),
+	       ('gateway', 'twitter'), ('gateway', 'facebook'), ('gateway', 'whatsapp'),
+	       ('gateway', 'telegram'), ('gateway', 'skype'),
                ('directory', 'user'), ('pubsub', 'pep'),
-               ('component', 'presence'), ('store', 'file'),
-               ('headline', 'newmail'), ('headline', 'rss'), ('headline', 'weather'),
+               ('store', 'file'),
+               ('headline', 'newmail'),
                ('proxy', 'bytestreams') ]
+# Old types
+# ('gateway', 'aim'), ('gateway', 'msn'), ('gateway', 'qq'), ('gateway', 'tlen'), ('gateway', 'yahoo'),
+# ('component', 'presence'), ('headline', 'rss'), ('headline', 'weather'),
 
 if GENERATE_HTML_FILES:
 	html_file_generator.generate_all( directory=OUTPUT_DIRECTORY,

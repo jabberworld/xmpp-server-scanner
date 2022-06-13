@@ -88,26 +88,31 @@ COLUMNS_DESCRIPTION = {
   # Pure MUC components are marked as x-muc by the xmpp_discoverer
   ('conference', 'x-muc'): {'title': 'MUC', 'description': 'MultiUser Chat'},
   ('conference', 'irc'): {'title': 'IRC', 'description': 'Internet Relay Chat Gateway'},
-  ('gateway', 'aim'): {'title': 'AIM', 'description': 'AIM Gateway'},
+  ('gateway', 'twitter'): {'title': 'Twitter', 'description': 'Twitter Gateway'},
+#  ('gateway', 'aim'): {'title': 'AIM', 'description': 'AIM Gateway'},
   ('gateway', 'gadu-gadu'): {'title': 'GG', 'description': 'Gadu Gadu gateway'},
   ('gateway', 'gtalk'): {'title': 'GTalk', 'description': 'Google Talk gateway'},
-  ('gateway', 'http-ws'): {'title': 'WS', 'description': 'HTTP Web Services'},
+  ('gateway', 'whatsapp'): {'title': 'WA', 'description': 'WhatsApp gateway'},
+#  ('gateway', 'http-ws'): {'title': 'WS', 'description': 'HTTP Web Services'},
   ('gateway', 'icq'): {'title': 'ICQ', 'description': 'ICQ gateway'},
-  ('gateway', 'msn'): {'title': 'MSN', 'description': 'MSN gateway'},
-  ('gateway', 'qq'): {'title': 'QQ', 'description': 'QQ gateway'},
+  ('gateway', 'telegram'): {'title': 'Telegram', 'description': 'Telegram gateway'},
+#  ('gateway', 'msn'): {'title': 'MSN', 'description': 'MSN gateway'},
+#  ('gateway', 'qq'): {'title': 'QQ', 'description': 'QQ gateway'},
   ('gateway', 'sms'): {'title': 'SMS', 'description': 'Short Message Service gateway'},
   ('gateway', 'smtp'): {'title': 'email', 'description': 'SMTP gateway'},
-  ('gateway', 'tlen'): {'title': 'TLEN', 'description': 'TLEN gateway'},
+  ('gateway', 'skype'): {'title': 'Skype', 'description': 'Skype gateway'},
+#  ('gateway', 'tlen'): {'title': 'TLEN', 'description': 'TLEN gateway'},
   ('gateway', 'xmpp'): {'title': 'XMPP', 'description': 'Jabber/XMPP gateway'},
-  ('gateway', 'yahoo'): {'title': 'Y!', 'description': 'Yahoo! gateway'},
+  ('gateway', 'facebook'): {'title': 'FB', 'description': 'Facebook gateway'},
+#  ('gateway', 'yahoo'): {'title': 'Y!', 'description': 'Yahoo! gateway'},
   ('directory', 'user'): {'title': 'User Directory'},
   ('pubsub', 'service'): {'title': 'PubSub', 'description': 'Publish-Subscribe'},
   ('pubsub', 'pep'): {'title': 'PEP', 'description': 'Personal Eventing Protocol'},
-  ('component', 'presence'): {'title': 'Web Presence'},
+#  ('component', 'presence'): {'title': 'Web Presence'},
   ('store', 'file'): {'title': 'File Storage'},
   ('headline', 'newmail'): {'title': 'Mail Alerts'},
-  ('headline', 'rss'): {'title': 'RSS', 'description': 'RSS notifications'},
-  ('headline', 'weather'): {'title': 'Weather'},
+#  ('headline', 'rss'): {'title': 'RSS', 'description': 'RSS notifications'},
+#  ('headline', 'weather'): {'title': 'Weather'},
   ('proxy', 'bytestreams'): {'title': 'Proxy', 'description': 'File transfer proxy'},
   'uptime': {'title': 'Uptime'},
   'times_online': {'title': '% Uptime'}
@@ -685,7 +690,7 @@ def generate( filename, servers, types, sort_by=None, sort_links=None,
 	if row_number % ROWS_BETWEEN_TITLES != 1:
 		f.write(table_header)
 	
-	f.write(u"""</table><div class='footer'>Page generated on %s by <a href='http://code.google.com/p/xmpp-server-scanner/'>XMPP Server Scanner</a><!-- %s --></div></body></html>\n""" %
+	f.write(u"""</table><div class='footer'>Page generated on %s by <a href='https://github.com/Tallefer/xmpp-server-scanner'>XMPP Server Scanner</a><!-- %s --></div></body></html>\n""" %
 	                    (datetime.utcnow().strftime('%d-%B-%Y %H:%M UTC'), get_version()) )
 	
 	
